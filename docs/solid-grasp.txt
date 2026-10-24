@@ -1,0 +1,27 @@
+Principios SOLID
+
+Responsabilidad única (SRP)
+
+Problema: En el diagrama inicial, el Administrador hacía demasiadas cosas: asignaba reclamos, generaba órdenes y además emitía los reportes. Los reportes no tienen
+mucho que ver con coordinar al personal, y si queríamos cambiar cómo se arma un reporte íbamos a tener que meternos en la clase Administrador.
+Decisión: Separamos los reportes en clases aparte, una para cada tipo. El Administrador ahora solo pide el reporte que necesita, pero no es el que lo arma.
+Clases: Administrador, ReporteReclamosPendientes, ReporteMorosidad, ReporteEquiposFueraServicio.
+Ventaja: Cada clase se encarga de una sola cosa. Si cambiamos un reporte, no tocamos nada de lo que tiene que ver con reclamos u órdenes.
+
+Abierto/Cerrado (OCP)
+
+Problema: Si los reportes se generaban desde un mismo método que preguntaba con if o switch cuál se pidió, cada vez que quisiéramos agregar uno nuevo había que 
+modificar ese método.
+Decisión: Creamos una interfaz Reporte con el método generar(), y cada reporte la implementa a su manera. Si mañana necesitamos, por ejemplo, un reporte de expensas del mes, 
+alcanza con crear una clase nueva que implemente la interfaz.
+Clases: Reporte (interfaz), ReporteReclamosPendientes, ReporteMorosidad, ReporteEquiposFueraServicio.
+Ventaja: Podemos sumar reportes sin modificar el código que ya funciona.
+
+Inversión de dependencias (DIP)
+Problema: El sistema tiene que guardar los datos en archivos. Si cada clase leyera y escribiera los archivos por su cuenta, todas quedarían atadas a ese formato, y cambiarlo 
+después nos obligaría a modificar un montón de clases.
+Decisión: Armamos una interfaz Repositorio<T> con los métodos guardar() y cargar(), y una clase RepositorioArchivo<T> que es la única que trabaja con los archivos. El resto 
+del sistema usa la interfaz y no sabe cómo se guardan los datos realmente.
+Clases: Repositorio<T> (interfaz), RepositorioArchivo<T>, y las clases que necesitan guardar datos (reclamos, expensas, autorizaciones, etc.).
+Ventaja: Si cambiamos la forma de guardar, solo tocamos RepositorioArchivo. También nos sirve para las pruebas, porque podemos usar un repositorio en memoria sin depender de
+archivos.
