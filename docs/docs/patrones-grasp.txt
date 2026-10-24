@@ -1,0 +1,36 @@
+Patrones GRASP
+
+1)Experto en información
+
+Problema: Teníamos que definir quién se encarga de chequear si una visita puede entrar en ese día y horario.
+Decisión: Le dimos esa tarea a Autorizacion, con el método validarVigencia(), ya que es la clase que tiene los datos para hacerlo: vigenciaDesde, vigenciaHasta y si es 
+recurrente. Lo mismo hicimos con Expensa, que calcula sus propios intereses con calcularInteres() porque es la que conoce el importe, el vencimiento y los pagos.
+Clases: Autorizacion, Expensa.
+Ventaja: Cada cálculo queda en la clase que tiene la información. El guardia no necesita saber cómo se valida la vigencia, solo le pregunta a la autorización si es válida.
+
+2)Creador
+Problema: Cada vez que un reclamo cambia de estado, hay que dejar registrada la fecha, el estado nuevo y una observación. Había que decidir qué clase crea esos registros.
+Decisión: Decidimos que sea Reclamo el que cree los HistorialEstado, porque los contiene (el historial no tiene sentido sin el reclamo) y además tiene los datos para 
+crearlos. Esto se ve en el diagrama de secuencia de Reabrir reclamo.
+Clases: Reclamo, HistorialEstado.
+Ventaja: Cada cambio de estado queda registrado sí o sí, porque lo hace el mismo reclamo y no depende de que otra clase se acuerde de hacerlo.
+
+3)Polimorfismo
+
+Problema: La prioridad de una orden de mantenimiento cambia según el tipo de equipo. Si falla una cámara, la prioridad es alta. Si falla una luminaria, es normal, salvo que 
+haya más de 3 luminarias con falla en el mismo sector. Hacer esto con un if (equipo instanceof Camara) nos obligaba a modificar ese código cada vez que se agregara un
+equipo nuevo.
+Decisión: Hicimos que Equipo sea abstracta, con un método abstracto calcularPrioridadFalla(int fallasEnSector). Camara lo sobreescribe y siempre devuelve ALTA, y Luminaria 
+lo sobreescribe y devuelve NORMAL, o ALTA si en el sector hay más de 3 fallas.
+Clases: Equipo, Camara, Luminaria, OrdenMantenimiento.
+Ventaja: Al generar la orden no importa qué tipo de equipo es, cada uno sabe calcular su prioridad. Si después se suma otro equipo, como una barrera de acceso, solo hay que 
+crear otra subclase.
+
+4)Bajo acoplamiento
+
+Problema: Si el vecino o el guardia pudieran modificar directamente el estado de un reclamo o su historial, dependerían de cómo está armado Reclamo por dentro, y cualquier 
+cambio en esa clase los afectaría.
+Decisión: El resto de las clases solo trabaja con el reclamo a través de sus métodos públicos: reabrir(), cambiarEstado() y escalar(). Todo lo que pasa adentro, como
+actualizar el estado o crear el historial, lo maneja Reclamo.
+Clases: Reclamo, HistorialEstado, Persona, Empleado.
+Ventaja: Las clases dependen menos unas de otras. Si cambiamos cómo se guarda el historial, el resto del sistema no se entera.
