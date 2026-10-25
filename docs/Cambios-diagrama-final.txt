@@ -1,0 +1,12 @@
+Cambios respecto del diagrama de clases inicial
+
+Agregamos la interfaz Reporte con sus tres implementaciones (ReporteReclamosPendientes, ReporteMorosidad y ReporteEquiposFueraServicio) y sacamos emitirReportes() de 
+Administrador. Lo hicimos por SRP, porque armar reportes no era responsabilidad del Administrador, y por OCP, para poder sumar reportes nuevos sin tocar los que ya existen.
+
+Agregamos la interfaz Repositorio<T> y la clase RepositorioArchivo<T>. Sale de DIP: el sistema guarda los datos a través de la interfaz y no depende de cómo se manejan los 
+archivos.
+
+Equipo pasa a ser abstracta, con el método abstracto calcularPrioridadFalla(int fallasEnSector), que Camara y Luminaria sobreescriben. Sale de Polimorfismo: cada equipo calcula
+su propia prioridad y no hace falta preguntar con un if qué tipo de equipo es.
+Los patrones Experto, Creador y Bajo acoplamiento no agregaron clases nuevas, porque ya estaban aplicados en el diagrama inicial (validarVigencia() en Autorizacion, 
+calcularInteres() en Expensa y la composición entre Reclamo y HistorialEstado).
