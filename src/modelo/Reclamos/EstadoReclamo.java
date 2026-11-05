@@ -1,30 +1,14 @@
-package modelo;
-
-import excepciones.EstadoReclamoInvalidoException;
+package modelo.reclamos;
 
 public enum EstadoReclamo {
-    ABIERTO {
-        @Override
-        public EstadoReclamo siguiente() { return ASIGNADO; }
-    },
-    ASIGNADO {
-        @Override
-        public EstadoReclamo siguiente() { return EN_CURSO; }
-    },
-    EN_CURSO {
-        @Override
-        public EstadoReclamo siguiente() { return RESUELTO; }
-    },
-    RESUELTO {
-        @Override
-        public EstadoReclamo siguiente() { return CERRADO; }
-    },
-    CERRADO {
-        @Override
-        public EstadoReclamo siguiente() {
-            throw new IllegalStateException("El reclamo ya se encuentra cerrado.");
-        }
-    };
+    ABIERTO, EN_CURSO, RESUELTO, CERRADO;
 
-    public abstract EstadoReclamo siguiente();
+    public EstadoReclamo siguiente() {
+        switch (this) {
+            case ABIERTO: return EN_CURSO;
+            case EN_CURSO: return RESUELTO;
+            case RESUELTO: return CERRADO;
+            default: return CERRADO;
+        }
+    }
 }

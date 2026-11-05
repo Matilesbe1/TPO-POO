@@ -1,7 +1,3 @@
-package modelo;
-
+package modelo.reportes;
 import java.util.List;
-
-public interface Reporte<> {
-    void generarReporte();
-}
+public interface Reporte { List<String> generar(); }

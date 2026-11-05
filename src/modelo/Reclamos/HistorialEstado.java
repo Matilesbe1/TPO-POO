@@ -1,27 +1,20 @@
-package modelo;
+package modelo.reclamos;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class HistorialEstado {
+public final class HistorialEstado implements Serializable {
     private final EstadoReclamo estado;
     private final String observacion;
-    private final LocalDateTime fechaHora;
+    private final LocalDateTime fecha;
 
-    public HistorialEstado(EstadoReclamo estado, String observacion) {
+    public HistorialEstado(EstadoReclamo estado, String observacion, LocalDateTime fecha) {
+        if (estado == null || fecha == null) throw new IllegalArgumentException("Estado y fecha son obligatorios.");
         this.estado = estado;
-        this.observacion = observacion;
-        this.fechaHora = LocalDateTime.now(); // Guarda la fecha y hora actual automáticamente
+        this.observacion = observacion == null ? "" : observacion;
+        this.fecha = fecha;
     }
-
-    public EstadoReclamo getEstado() {
-        return estado;
-    }
-
-    public String getObservacion() {
-        return observacion;
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
-    }
+    public EstadoReclamo getEstado() { return estado; }
+    public String getObservacion() { return observacion; }
+    public LocalDateTime getFecha() { return fecha; }
 }

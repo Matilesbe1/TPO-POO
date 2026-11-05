@@ -1,4 +1,4 @@
-package modelo;
+package modelo.reclamos;
 
 public enum TipoReclamo {
     SEGURIDAD(Prioridad.ALTA),
@@ -6,13 +6,9 @@ public enum TipoReclamo {
     CONVIVENCIA(Prioridad.BAJA),
     ADMINISTRATIVO(Prioridad.BAJA);
 
-    private final Prioridad prioridadPorDefecto;
+    private final Prioridad prioridad;
 
-    TipoReclamo(Prioridad prioridadPorDefecto) {
-        this.prioridadPorDefecto = prioridadPorDefecto;
-    }
+    TipoReclamo(Prioridad prioridad) { this.prioridad = prioridad; }
 
-    public Prioridad getPrioridadPorDefecto() {
-        return prioridadPorDefecto;
-    }
+    public Prioridad getPrioridad() { return prioridad; }
 }

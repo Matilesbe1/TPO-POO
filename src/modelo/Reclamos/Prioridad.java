@@ -1,5 +1,3 @@
+package modelo.reclamos;
 
-
-public enum Prioridad {
-    ALTA, MEDIA, BAJA
-}
+public enum Prioridad { BAJA, NORMAL, MEDIA, ALTA }
