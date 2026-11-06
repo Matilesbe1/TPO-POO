@@ -1,0 +1,5 @@
+data/
+out/
+*.class
+.idea/
+*.iml
