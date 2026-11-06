@@ -1,5 +1,5 @@
-package modelo;
+package modelo.expensas;
 
 public enum EstadoExpensa {
-    PENDIENTE, PAGADA_PARCIALMENTE, PAGADA, VENCIDA
+    PENDIENTE, PAGADA_PARCIALMENTE, PAGADA
 }
