@@ -1,4 +1,4 @@
-package ar.aromos.modelo.personas;
+package modelo.personas;
 
 import java.io.Serializable;
 

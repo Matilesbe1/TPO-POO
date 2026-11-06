@@ -1,4 +1,4 @@
-package ar.aromos.modelo.reclamos;
+package modelo.reclamos;
 
 import modelo.lotes.Lote;
 import modelo.personas.Vecino;

@@ -1,10 +1,11 @@
-package modelo;
+package persistencia;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface Repositorio extends Identificable {
-    void guardar( Object entidad) throws Exception;
-    Object buscarPorId(Object id);
-    List<> listarTodos();
-    void eliminar(Object id);
+public interface Repositorio<T extends Identificable> {
+    void guardar(T objeto);
+    Optional<T> buscarPorId(String id);
+    List<T> listar();
+    void actualizar(T objeto);
 }
