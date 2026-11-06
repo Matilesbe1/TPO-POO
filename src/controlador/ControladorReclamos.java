@@ -1,4 +1,4 @@
-package ar.aromos.controlador;
+package controlador;
 
 import modelo.personas.*;
 import modelo.lotes.Lote;

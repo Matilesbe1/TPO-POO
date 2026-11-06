@@ -1,4 +1,4 @@
-package ar.aromos.modelo.personas;
+package modelo.personas;
 
 import modelo.lotes.Lote;
 import modelo.reclamos.*;
@@ -29,7 +29,7 @@ public class Vecino implements Identificable, Serializable {
     public Reclamo presentarReclamo(Lote lote, TipoReclamo tipo, String descripcion, LocalDateTime fecha)
             throws ReglaNegocioException {
         if (lote == null || !lote.estaAutorizado(this))
-            throw new ar.aromos.modelo.excepciones.ReclamoNoAutorizadoException();
+            throw new modelo.excepciones.ReclamoNoAutorizadoException();
         Reclamo reclamo = new Reclamo(lote, this, tipo, descripcion, fecha);
         lote.agregarReclamo(reclamo);
         return reclamo;

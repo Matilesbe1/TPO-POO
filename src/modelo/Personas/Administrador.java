@@ -1,4 +1,4 @@
-package ar.aromos.modelo.personas;
+package modelo.personas;
 
 import modelo.reclamos.Reclamo;
 import modelo.excepciones.ReglaNegocioException;
@@ -16,9 +16,9 @@ public class Administrador {
         long enCurso = reclamosAsignados.stream()
                 .filter(r -> r.getResponsable() != null
                         && r.getResponsable().getLegajo().equals(empleado.getLegajo())
-                        && r.getEstado() == ar.aromos.modelo.reclamos.EstadoReclamo.EN_CURSO)
+                        && r.getEstado() == modelo.reclamos.EstadoReclamo.EN_CURSO)
                 .count();
-        if (enCurso >= 5) throw new ar.aromos.modelo.excepciones.LimiteReclamosException();
+        if (enCurso >= 5) throw new modelo.excepciones.LimiteReclamosException();
         reclamo.asignarResponsable(empleado, fecha);
         if (!reclamosAsignados.contains(reclamo)) reclamosAsignados.add(reclamo);
     }
