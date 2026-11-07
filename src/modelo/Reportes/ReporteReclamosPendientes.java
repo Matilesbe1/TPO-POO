@@ -17,7 +17,8 @@ public class ReporteReclamosPendientes implements Reporte {
         pendientes.sort(Reclamo.comparadorPorPrioridadYFecha());
         List<String> resultado = new ArrayList<>();
         for (Reclamo r : pendientes)
-            resultado.add(r.getId() + " | " + r.getPrioridad() + " | " + r.getEstado() + " | " + r.getDescripcion());
+            resultado.add(r.getId() + " | " + r.getPrioridad() + " | " + r.getEstado() + " | " + r.getDescripcion()
+                    + (r.isEscalado() ? " | ESCALADO" : ""));
         return resultado;
     }
 }

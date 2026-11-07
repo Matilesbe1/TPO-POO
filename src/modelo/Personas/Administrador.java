@@ -2,24 +2,25 @@ package modelo.personas;
 
 import modelo.reclamos.Reclamo;
 import modelo.excepciones.ReglaNegocioException;
+import modelo.excepciones.LimiteReclamosException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Administrador {
-    private final List<Reclamo> reclamosAsignados = new ArrayList<>();
+    public static final int MAXIMO_RECLAMOS_ACTIVOS = 5;   // RN01.8
 
-    public void asignarReclamo(Reclamo reclamo, EmpleadoMantenimiento empleado, LocalDateTime fecha)
-            throws ReglaNegocioException {
-        if (reclamo == null || empleado == null || fecha == null)
+    // RN01.7 y RN01.8: un único responsable por reclamo y como máximo 5 reclamos activos por empleado.
+    // Se cuentan sobre todos los reclamos registrados, así el límite no depende de quién los asignó.
+    public void asignarReclamo(Reclamo reclamo, EmpleadoMantenimiento empleado, LocalDateTime fecha,
+                               List<Reclamo> reclamosRegistrados) throws ReglaNegocioException {
+        if (reclamo == null || empleado == null || fecha == null || reclamosRegistrados == null)
             throw new IllegalArgumentException("Reclamo, empleado y fecha son obligatorios.");
-        long enCurso = reclamosAsignados.stream()
-                .filter(r -> r.getResponsable() != null
-                        && r.getResponsable().getLegajo().equals(empleado.getLegajo())
-                        && r.getEstado() == modelo.reclamos.EstadoReclamo.EN_CURSO)
-                .count();
-        if (enCurso >= 5) throw new modelo.excepciones.LimiteReclamosException();
+        int activos = 0;
+        for (Reclamo r : reclamosRegistrados)
+            if (!r.equals(reclamo) && r.estaActivo() && r.getResponsable() != null
+                    && r.getResponsable().getLegajo().equals(empleado.getLegajo()))
+                activos++;
+        if (activos >= MAXIMO_RECLAMOS_ACTIVOS) throw new LimiteReclamosException();
         reclamo.asignarResponsable(empleado, fecha);
-        if (!reclamosAsignados.contains(reclamo)) reclamosAsignados.add(reclamo);
     }
 }

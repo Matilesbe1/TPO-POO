@@ -24,6 +24,7 @@ public class Reclamo implements Identificable, Serializable {
     private EmpleadoMantenimiento responsable;
     private final List<HistorialEstado> historial = new ArrayList<>();
     private final List<Comentario> comentarios = new ArrayList<>();
+    private boolean escalado;
 
     public Reclamo(Lote lote, Vecino solicitante, TipoReclamo tipo, String descripcion, LocalDateTime fecha) {
         if (lote == null || solicitante == null || tipo == null || descripcion == null || descripcion.isBlank() || fecha == null)
@@ -51,6 +52,8 @@ public class Reclamo implements Identificable, Serializable {
         if (nuevo == null || fecha == null) throw new IllegalArgumentException("Estado y fecha son obligatorios.");
         if (nuevo != estado.siguiente() || estado == EstadoReclamo.CERRADO)
             throw new TransicionInvalidaException();
+        if (nuevo == EstadoReclamo.ASIGNADO && responsable == null)
+            throw new TransicionInvalidaException("Primero hay que asignarle un empleado responsable.");
         estado = nuevo;
         historial.add(new HistorialEstado(nuevo, observacion, fecha));
     }
@@ -63,8 +66,13 @@ public class Reclamo implements Identificable, Serializable {
             throw new TransicionInvalidaException("El reclamo ya tiene un responsable asignado.");
         responsable = empleado;
         if (estado == EstadoReclamo.ABIERTO)
-            cambiarEstado(EstadoReclamo.EN_CURSO, "Reclamo asignado", fecha);
+            cambiarEstado(EstadoReclamo.ASIGNADO, "Asignado a " + empleado.getNombre(), fecha);
     }
+    // Un reclamo está activo para su responsable mientras no se resuelva (RN01.8).
+    public boolean estaActivo() {
+        return estado == EstadoReclamo.ASIGNADO || estado == EstadoReclamo.EN_CURSO;
+    }
+    public boolean isEscalado() { return escalado; }
     public void reabrir(LocalDateTime fecha) throws ReglaNegocioException {
         if (fecha == null) throw new IllegalArgumentException("La fecha es obligatoria.");
         if (estado != EstadoReclamo.RESUELTO) throw new ReclamoNoReabribleException();
@@ -89,15 +97,19 @@ public class Reclamo implements Identificable, Serializable {
             }
         }
     }
-    public void escalar() {
-        if (estado == EstadoReclamo.ABIERTO && prioridad == Prioridad.ALTA) {
-            // El escalamiento queda reflejado como observación sin alterar el estado.
-            historial.add(new HistorialEstado(estado, "Reclamo escalado", fechaCreacion.plusHours(25)));
-        }
+    // RN01.9: un reclamo de prioridad alta sin atender en 24 h se escala al administrador (una sola vez).
+    // El escalamiento queda reflejado en el historial sin alterar el estado.
+    public boolean escalar(LocalDateTime fechaHora) {
+        if (!debeEscalarse(fechaHora)) return false;
+        escalado = true;
+        historial.add(new HistorialEstado(estado, "Escalado al administrador: prioridad alta sin atender en 24 h", fechaHora));
+        return true;
     }
     public boolean debeEscalarse(LocalDateTime fechaHora) {
-        return prioridad == Prioridad.ALTA && estado == EstadoReclamo.ABIERTO
-                && Duration.between(fechaCreacion, fechaHora).toHours() >= 25;
+        if (fechaHora == null) throw new IllegalArgumentException("La fecha es obligatoria.");
+        boolean sinAtender = estado == EstadoReclamo.ABIERTO || estado == EstadoReclamo.ASIGNADO;
+        return prioridad == Prioridad.ALTA && sinAtender && !escalado
+                && Duration.between(fechaCreacion, fechaHora).toMinutes() > 24 * 60;
     }
     public static Comparator<Reclamo> comparadorPorPrioridadYFecha() {
         return Comparator.comparing(Reclamo::getPrioridad).reversed()

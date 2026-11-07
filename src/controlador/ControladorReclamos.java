@@ -7,6 +7,7 @@ import modelo.excepciones.ReglaNegocioException;
 import modelo.reportes.ReporteReclamosPendientes;
 import persistencia.Repositorio;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ControladorReclamos {
@@ -35,11 +36,36 @@ public class ControladorReclamos {
         lotes.actualizar(lote);
         return reclamo.getId();
     }
+    public void agregarResidente(String numeroLote, String documento) {
+        Lote lote = lotes.buscarPorId(numeroLote)
+                .orElseThrow(() -> new IllegalArgumentException("No existe el lote."));
+        Vecino residente = vecinos.buscarPorId(documento)
+                .orElseThrow(() -> new IllegalArgumentException("No existe el vecino."));
+        lote.agregarResidente(residente);
+        lotes.actualizar(lote);
+    }
     public void asignar(String idReclamo, EmpleadoMantenimiento empleado, LocalDateTime fecha,
                         Administrador administrador) throws ReglaNegocioException {
         Reclamo r = obtenerReclamo(idReclamo);
-        administrador.asignarReclamo(r, empleado, fecha);
+        administrador.asignarReclamo(r, empleado, fecha, reclamos.listar());
         reclamos.actualizar(r);
+    }
+    public void comentar(String idReclamo, String autor, String texto, LocalDateTime fecha) {
+        Reclamo r = obtenerReclamo(idReclamo);
+        r.agregarComentario(autor, texto, fecha);
+        reclamos.actualizar(r);
+    }
+    // RN01.6 y RN01.9: escala los de prioridad alta sin atender y cierra los resueltos hace más de 5 días.
+    public List<String> revisarPlazos(LocalDateTime fecha) {
+        List<String> resultado = new ArrayList<>();
+        for (Reclamo r : reclamos.listar()) {
+            EstadoReclamo antes = r.getEstado();
+            if (r.escalar(fecha)) resultado.add("Escalado al administrador: " + r.getId() + " | " + r.getDescripcion());
+            r.cerrarSiVencido(fecha);
+            if (antes != r.getEstado()) resultado.add("Cerrado por plazo vencido: " + r.getId());
+            reclamos.actualizar(r);
+        }
+        return resultado;
     }
     public void avanzar(String idReclamo, EstadoReclamo nuevo, String observacion, LocalDateTime fecha)
             throws ReglaNegocioException {
