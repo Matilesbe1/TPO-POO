@@ -6,7 +6,7 @@ import modelo.personas.Guardia;
 import modelo.excepciones.IngresoNoEncontradoException;
 
 public class RegistroAcceso implements Serializable {
-    private final int numero;
+    private final String numero;
     private final Autorizacion autorizacion;
     private final LocalDateTime horaIngreso;
     private final Guardia guardiaIngreso;
@@ -16,7 +16,7 @@ public class RegistroAcceso implements Serializable {
     public RegistroAcceso(Autorizacion autorizacion, LocalDateTime ingreso, Guardia guardia) {
         if (autorizacion == null || ingreso == null || guardia == null)
             throw new IllegalArgumentException("Autorización, ingreso y guardia son obligatorios.");
-        this.numero = Math.abs((autorizacion.getNumero() + ingreso.toString()).hashCode());
+        this.numero = autorizacion.getDocumentoVisitante() + "-" + ingreso;
         this.autorizacion = autorizacion;
         this.horaIngreso = ingreso;
         this.guardiaIngreso = guardia;
@@ -29,7 +29,7 @@ public class RegistroAcceso implements Serializable {
         horaEgreso = egreso;
         guardiaEgreso = guardia;
     }
-    public int getNumero() { return numero; }
+    public String getNumero() { return numero; }
     public Autorizacion getAutorizacion() { return autorizacion; }
     public String getDocumentoPersona() { return autorizacion.getDocumentoVisitante(); }
     public LocalDateTime getHoraIngreso() { return horaIngreso; }

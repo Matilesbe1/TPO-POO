@@ -1,5 +1,6 @@
 package modelo.lotes;
 
+import modelo.accesos.Autorizacion;
 import modelo.excepciones.AjusteInvalidoException;
 import modelo.excepciones.ExpensaDuplicadaException;
 import modelo.excepciones.PagoInvalidoException;
@@ -28,8 +29,7 @@ public class Lote implements Identificable, Serializable {
     private Vecino titular;
     private final List<Vecino> residentes = new ArrayList<>();
     private final List<Expensa> expensas = new ArrayList<>();
-    // Object permite integrar la clase Autorizacion del otro módulo sin acoplarlo todavía.
-    private final List<Object> autorizaciones = new ArrayList<>();
+    private final List<Autorizacion> autorizaciones = new ArrayList<>();
     private final List<Reclamo> reclamos = new ArrayList<>();
     private final List<Notificacion> notificaciones = new ArrayList<>();
     private boolean moroso;
@@ -60,7 +60,7 @@ public class Lote implements Identificable, Serializable {
     }
     public List<Vecino> getResidentes() { return new ArrayList<>(residentes); }
     public List<Expensa> getExpensas() { return new ArrayList<>(expensas); }
-    public List<Object> getAutorizaciones() { return new ArrayList<>(autorizaciones); }
+    public List<Autorizacion> getAutorizaciones() { return new ArrayList<>(autorizaciones); }
     public List<Reclamo> getReclamos() { return new ArrayList<>(reclamos); }
     public List<Notificacion> getNotificaciones() { return new ArrayList<>(notificaciones); }
 
@@ -141,7 +141,11 @@ public class Lote implements Identificable, Serializable {
         moroso = morosoAhora;
     }
 
-    public void agregarAutorizacion(Object autorizacion) { if (autorizacion == null) throw new IllegalArgumentException(); autorizaciones.add(autorizacion); }
+    public void agregarAutorizacion(Autorizacion autorizacion) {
+        if (autorizacion == null || !autorizacion.getLote().equals(this))
+            throw new IllegalArgumentException("La autorización no corresponde a este lote.");
+        autorizaciones.add(autorizacion);
+    }
 
     @Override public boolean equals(Object otro) {
         if (this == otro) return true;

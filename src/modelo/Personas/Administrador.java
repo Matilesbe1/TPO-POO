@@ -1,5 +1,6 @@
 package modelo.personas;
 
+import modelo.equipos.OrdenMantenimiento;
 import modelo.reclamos.Reclamo;
 import modelo.excepciones.ReglaNegocioException;
 import modelo.excepciones.LimiteReclamosException;
@@ -22,5 +23,11 @@ public class Administrador {
                 activos++;
         if (activos >= MAXIMO_RECLAMOS_ACTIVOS) throw new LimiteReclamosException();
         reclamo.asignarResponsable(empleado, fecha);
+    }
+
+    // RF04: el administrador asigna las órdenes de mantenimiento a los empleados.
+    public void asignarOrden(OrdenMantenimiento orden, EmpleadoMantenimiento empleado) {
+        if (orden == null || empleado == null) throw new IllegalArgumentException("Orden y empleado son obligatorios.");
+        orden.asignarTecnico(empleado);
     }
 }

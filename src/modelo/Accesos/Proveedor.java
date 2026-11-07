@@ -8,4 +8,6 @@ public class Proveedor extends PersonaExterna {
         this.servicio = servicio;
     }
     public String getServicio() { return servicio; }
+    @Override public boolean puedeTenerAutorizacionRecurrente() { return true; }
+    @Override public String getTipo() { return "Proveedor (" + servicio + ")"; }
 }

@@ -1,11 +1,16 @@
 package modelo.personas;
 
+import modelo.accesos.Autorizacion;
+import modelo.accesos.PersonaExterna;
 import modelo.lotes.Lote;
 import modelo.reclamos.*;
+import modelo.excepciones.AutorizacionInvalidaException;
 import modelo.excepciones.ReglaNegocioException;
 import persistencia.Identificable;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 
 public class Vecino implements Identificable, Serializable {
@@ -33,6 +38,18 @@ public class Vecino implements Identificable, Serializable {
         Reclamo reclamo = new Reclamo(lote, this, tipo, descripcion, fecha);
         lote.agregarReclamo(reclamo);
         return reclamo;
+    }
+
+    // RF05 / RN04.1: el vecino (titular o residente del lote) emite la autorización previa de ingreso.
+    public Autorizacion autorizarVisita(PersonaExterna persona, Lote lote, LocalDate fechaDesde, LocalDate fechaHasta,
+                                        LocalTime horaDesde, LocalTime horaHasta, boolean recurrente)
+            throws ReglaNegocioException {
+        if (lote == null || !lote.estaAutorizado(this))
+            throw new AutorizacionInvalidaException("Solo el titular o un residente del lote puede autorizar visitas.");
+        Autorizacion autorizacion = new Autorizacion(persona, this, lote, fechaDesde, fechaHasta,
+                horaDesde, horaHasta, recurrente);
+        lote.agregarAutorizacion(autorizacion);
+        return autorizacion;
     }
 
     @Override public boolean equals(Object otro) {

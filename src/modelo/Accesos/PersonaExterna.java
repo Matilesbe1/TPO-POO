@@ -14,4 +14,8 @@ public abstract class PersonaExterna implements Serializable {
     }
     public String getNombre() { return nombre; }
     public String getDocumento() { return documento; }
+
+    // RN04.4: solo los proveedores habituales pueden tener autorizaciones recurrentes (Proveedor lo redefine).
+    public boolean puedeTenerAutorizacionRecurrente() { return false; }
+    public abstract String getTipo();
 }

@@ -16,10 +16,12 @@ public class Luminaria extends Equipo {
         this.potencia = potencia;
     }
 
+    // RN03.3 y RN03.4: prioridad normal, salvo que fallen más de tres luminarias del mismo sector.
     @Override public Prioridad calcularPrioridadFalla(int fallasEnSector) {
         if (fallasEnSector < 0) throw new IllegalArgumentException("Cantidad de fallas inválida.");
         return fallasEnSector > 3 ? Prioridad.ALTA : Prioridad.NORMAL;
     }
+    @Override public String getTipo() { return "Luminaria"; }
     public String getTipoLampara() { return tipoLampara; }
     public double getPotencia() { return potencia; }
 }
