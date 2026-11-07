@@ -1,4 +1,4 @@
-package ar.aromos.modelo.accesos;
+package modelo.accesos;
 
 public class Proveedor extends PersonaExterna {
     private final String servicio;

@@ -1,4 +1,4 @@
-package ar.aromos.modelo.accesos;
+package modelo.accesos;
 
 import java.io.Serializable;
 
